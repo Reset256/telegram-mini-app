@@ -7,37 +7,37 @@
 </head>
 <body>
   <h3>Введите текст</h3>
-
   <input id="textInput" placeholder="Напиши что-нибудь" />
   <button onclick="send()">Отправить</button>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
+    // Глобальная функция
+    function send() {
+      const text = document.getElementById("textInput").value;
+      const user = window.Telegram.WebApp.initDataUnsafe?.user;
 
+      if (!user) {
+        alert("Ошибка: user undefined. Откройте Mini App через кнопку бота!");
+        return;
+      }
 
-      function send() {
-  const text = document.getElementById("textInput").value;
-  const user = window.Telegram.WebApp.initDataUnsafe?.user;
-
-  console.log("USER:", user);
-  console.log("TEXT:", text);
-
-  fetch("https://YOUR_NGROK_URL/send-message", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      text,
-      userId: user?.id
-    })
-  })
-  .then(r => r.json())
-  .then(r => console.log("RESPONSE:", r))
-  .catch(e => console.error("FETCH ERROR:", e));
-}
+      fetch("https://unmulcted-dobsonfly-modesta.ngrok-free.dev/send-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          text,
+          userId: user.id
+        })
+      })
+      .then(r => r.json())
+      .then(r => console.log("Backend response:", r))
+      .catch(e => console.error("Fetch error:", e));
     }
+
+    // Инициализация Telegram WebApp
+    window.Telegram.WebApp.ready();
   </script>
 </body>
 </html>
