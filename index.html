@@ -11,17 +11,29 @@
   <button onclick="send()">Отправить</button>
 
   <script>
-    // Глобальная функция
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    // Глобальная функция send
     function send() {
-      const text = document.getElementById("textInput").value;
-      const user = window.Telegram.WebApp.initDataUnsafe?.user;
+      // Объявляем input внутри функции
+      const input = document.getElementById("textInput");
+      const text = input.value.trim();
+      const user = tg.initDataUnsafe?.user;
 
       if (!user) {
         alert("Ошибка: user undefined. Откройте Mini App через кнопку бота!");
         return;
       }
 
-      fetch("https://unmulcted-dobsonfly-modesta.ngrok-free.dev/send-message", {
+      if (!text) {
+        alert("Введите текст перед отправкой!");
+        return;
+      }
+
+      // Отправка на backend
+      fetch("https://YOUR_BACKEND_URL/send-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -34,14 +46,11 @@
       .then(r => r.json())
       .then(r => {
         console.log("Backend response:", r);
-        // ✅ Очищаем поле после успешной отправки
+        // ✅ очищаем поле
         input.value = "";
       })
       .catch(e => console.error("Fetch error:", e));
     }
-
-    // Инициализация Telegram WebApp
-    window.Telegram.WebApp.ready();
   </script>
 </body>
 </html>
