@@ -32,7 +32,11 @@
         })
       })
       .then(r => r.json())
-      .then(r => console.log("Backend response:", r))
+      .then(r => {
+        console.log("Backend response:", r);
+        // ✅ Очищаем поле после успешной отправки
+        input.value = "";
+      })
       .catch(e => console.error("Fetch error:", e));
     }
 
