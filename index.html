@@ -15,17 +15,28 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
 
-    function send() {
-      const text = document.getElementById("textInput").value;
-      const userId = tg.initDataUnsafe.user.id;
 
-      fetch("https://https://unmulcted-dobsonfly-modesta.ngrok-free.dev/send-message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text, userId })
-      });
+      function send() {
+  const text = document.getElementById("textInput").value;
+  const user = window.Telegram.WebApp.initDataUnsafe?.user;
+
+  console.log("USER:", user);
+  console.log("TEXT:", text);
+
+  fetch("https://YOUR_NGROK_URL/send-message", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      text,
+      userId: user?.id
+    })
+  })
+  .then(r => r.json())
+  .then(r => console.log("RESPONSE:", r))
+  .catch(e => console.error("FETCH ERROR:", e));
+}
     }
   </script>
 </body>
