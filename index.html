@@ -4,21 +4,31 @@
   <meta charset="UTF-8" />
   <title>Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    #status {
+      margin-top: 10px;
+      color: green;
+      font-weight: bold;
+      display: none; /* Скрыт по умолчанию */
+    }
+  </style>
 </head>
 <body>
   <h3>Введите текст</h3>
   <input id="textInput" placeholder="Напиши что-нибудь" />
   <button onclick="send()">Отправить</button>
 
+  <!-- Поле для визуального статуса -->
+  <div id="status">Отправлено ✅</div>
+
   <script>
     // Инициализация Telegram WebApp
     const tg = window.Telegram.WebApp;
     tg.ready();
 
-    // Глобальная функция send
     function send() {
-      // Объявляем input внутри функции
       const input = document.getElementById("textInput");
+      const status = document.getElementById("status");
       const text = input.value.trim();
       const user = tg.initDataUnsafe?.user;
 
@@ -32,24 +42,34 @@
         return;
       }
 
-      // Отправка на backend
+      // Скрываем статус перед новой отправкой
+      status.style.display = "none";
+
       fetch("https://unmulcted-dobsonfly-modesta.ngrok-free.dev/send-message", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          text,
-          userId: user.id
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, userId: user.id })
       })
       .then(r => r.json())
       .then(r => {
         console.log("Backend response:", r);
-        // ✅ очищаем поле
+        // очищаем поле
         input.value = "";
+        // показываем индикатор на 2 секунды
+        status.style.display = "block";
+        setTimeout(() => { status.style.display = "none"; }, 2000);
       })
-      .catch(e => console.error("Fetch error:", e));
+      .catch(e => {
+        console.error("Fetch error:", e);
+        status.style.color = "red";
+        status.textContent = "Ошибка при отправке ❌";
+        status.style.display = "block";
+        setTimeout(() => {
+          status.style.display = "none";
+          status.style.color = "green";
+          status.textContent = "Отправлено ✅";
+        }, 3000);
+      });
     }
   </script>
 </body>
